@@ -24,21 +24,15 @@ function App() {
     const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
     const accounts = await web3.eth.getAccounts();
     const owner = accounts[0];
-    const message = "Some text";
-    const messageHash = web3.utils.toHex(message);
-    const signature = await web3.eth.personal.sign(message, owner);
+    const data = "Alohomora";
+    const message = web3.utils.toHex(data);
+    const sig = await web3.eth.personal.sign(message, owner);
 
-    axios.post("http://localhost:5000/validate", {
-      owner,
-      message,
-      messageHash,
-      signature,
-    });
-  };
-
-  const checkServer = async () => {
     axios
-      .get("http://localhost:5000/echo")
+      .post("http://localhost:5000/validate-signature", {
+        owner,
+        sig,
+      })
       .then((response) => console.log(response));
   };
 
@@ -46,7 +40,6 @@ function App() {
     <div className="App">
       <h3>Do you have the token?</h3>
       <button onClick={validateAddress}>Validate Token</button>
-      <button onClick={checkServer}>Check Server</button>
     </div>
   );
 }
